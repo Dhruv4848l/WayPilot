@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getTrips, createTrip, getTripById } = require('../controllers/tripController');
+const { getTrips, createTrip, getTripById, copyTrip } = require('../controllers/tripController');
 const { protect } = require('../middleware/authMiddleware');
 
 router.route('/')
@@ -9,5 +9,8 @@ router.route('/')
 
 router.route('/:id')
   .get(protect, getTripById);
+
+router.route('/:id/copy')
+  .post(protect, copyTrip);
 
 module.exports = router;

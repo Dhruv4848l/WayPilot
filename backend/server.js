@@ -16,6 +16,7 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/trips', require('./routes/trips'));
 app.use('/api/cities', require('./routes/cities'));
 app.use('/api/budget', require('./routes/budget'));
+app.use('/api/community', require('./routes/community'));
 
 // Health check
 app.get('/', (req, res) => {

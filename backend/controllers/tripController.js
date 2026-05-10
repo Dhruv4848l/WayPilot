@@ -1,4 +1,4 @@
-const { Trip, Stop, City, StopActivity, Activity } = require('../models');
+const { Trip, Stop, City, StopActivity, Activity, sequelize } = require('../models');
 
 // @desc    Get logged in user trips
 // @route   GET /api/trips
@@ -70,6 +70,71 @@ exports.getTripById = async (req, res) => {
       res.status(404).json({ message: 'Trip not found' });
     }
   } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc    Copy a trip
+// @route   POST /api/trips/:id/copy
+// @access  Private
+exports.copyTrip = async (req, res) => {
+  const t = await sequelize.transaction();
+  try {
+    const originalTrip = await Trip.findByPk(req.params.id, {
+      include: [
+        {
+          model: Stop,
+          as: 'stops',
+          include: [
+            {
+              model: StopActivity,
+              as: 'stopActivities'
+            }
+          ]
+        }
+      ]
+    });
+
+    if (!originalTrip) {
+      return res.status(404).json({ message: 'Trip not found' });
+    }
+
+    // 1. Create new Trip
+    const newTrip = await Trip.create({
+      name: `Copy of ${originalTrip.name}`,
+      description: originalTrip.description,
+      coverPhoto: originalTrip.coverPhoto,
+      startDate: originalTrip.startDate,
+      endDate: originalTrip.endDate,
+      userId: req.user.id,
+      status: 'UPCOMING',
+      isPublic: false
+    }, { transaction: t });
+
+    // 2. Copy Stops and StopActivities
+    for (const stop of originalTrip.stops) {
+      const newStop = await Stop.create({
+        tripId: newTrip.id,
+        cityId: stop.cityId,
+        arrivalDate: stop.arrivalDate,
+        departureDate: stop.departureDate,
+        order: stop.order
+      }, { transaction: t });
+
+      for (const sa of stop.stopActivities) {
+        await StopActivity.create({
+          stopId: newStop.id,
+          activityId: sa.activityId,
+          order: sa.order,
+          notes: sa.notes
+        }, { transaction: t });
+      }
+    }
+
+    await t.commit();
+    res.status(201).json(newTrip);
+  } catch (error) {
+    await t.rollback();
     res.status(500).json({ message: error.message });
   }
 };
