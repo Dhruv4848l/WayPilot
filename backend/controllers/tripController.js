@@ -20,7 +20,28 @@ exports.getTrips = async (req, res) => {
 // @access  Private
 exports.createTrip = async (req, res) => {
   try {
-    const { name, description, startDate, endDate, coverPhoto } = req.body;
+    const { name, description, startDate, endDate } = req.body;
+    let coverPhoto = req.body.coverPhoto;
+
+    // Handle image upload if a file is present
+    if (req.file) {
+      const cloudinary = require('../config/cloudinary');
+      const streamUpload = (req) => {
+        return new Promise((resolve, reject) => {
+          const stream = cloudinary.uploader.upload_stream(
+            { folder: 'traveloop/trips' },
+            (error, result) => {
+              if (result) resolve(result);
+              else reject(error);
+            }
+          );
+          stream.end(req.file.buffer);
+        });
+      };
+      
+      const result = await streamUpload(req);
+      coverPhoto = result.secure_url;
+    }
 
     const trip = await Trip.create({
       userId: req.user.id,

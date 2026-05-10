@@ -9,8 +9,12 @@ const TripCard = ({ trip }) => {
   return (
     <motion.div whileHover={{ y: -2 }} className="card p-4 flex items-center justify-between mb-4 bg-bg-surface">
       <div className="flex-1 flex items-center gap-4">
-        <div className="w-16 h-16 bg-bg-elevated rounded-lg flex items-center justify-center border border-brand-primary/10">
-          <span className="text-xs text-text-secondary">Image</span>
+        <div className="w-16 h-16 bg-bg-elevated rounded-lg flex items-center justify-center border border-brand-primary/10 overflow-hidden shrink-0">
+          {trip.coverPhoto ? (
+            <img src={trip.coverPhoto} alt={trip.name} className="w-full h-full object-cover" />
+          ) : (
+            <span className="text-xs text-text-secondary">Image</span>
+          )}
         </div>
         <div>
           <h3 className="font-semibold text-lg">{trip.name}</h3>
