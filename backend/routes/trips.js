@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getTrips, createTrip, getTripById, copyTrip } = require('../controllers/tripController');
+const { getTrips, createTrip, getTripById, copyTrip, deleteTrip } = require('../controllers/tripController');
 const { protect } = require('../middleware/authMiddleware');
 const upload = require('../middleware/uploadMiddleware');
 
@@ -9,7 +9,8 @@ router.route('/')
   .post(protect, upload.single('coverPhoto'), createTrip);
 
 router.route('/:id')
-  .get(protect, getTripById);
+  .get(protect, getTripById)
+  .delete(protect, deleteTrip);
 
 router.route('/:id/copy')
   .post(protect, copyTrip);

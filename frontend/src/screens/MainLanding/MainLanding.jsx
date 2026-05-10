@@ -39,14 +39,30 @@ const MainLanding = () => {
 
   return (
     <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-      {/* Banner Image Placeholder */}
-      <div className="w-full h-64 md:h-80 bg-bg-elevated border border-brand-primary/20 rounded-2xl flex flex-col items-center justify-center mb-8 relative overflow-hidden">
-        <h1 className="text-4xl md:text-5xl font-display text-text-primary z-10 text-center px-4">
-          {greeting()}, {user?.firstName || 'Explorer'} 🌅
-        </h1>
-        <p className="text-text-secondary mt-2 z-10">Where to next?</p>
-        <div className="absolute inset-0 bg-black/40"></div>
-        <span className="absolute bottom-4 right-4 text-xs text-text-disabled">Banner Image</span>
+      {/* Banner Section */}
+      <div className="w-full h-64 md:h-80 rounded-2xl mb-8 relative overflow-hidden group shadow-xl">
+        <img 
+          src="/banner.png" 
+          alt="Traveloop Banner" 
+          className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent flex flex-col items-start justify-center px-8 md:px-12">
+          <motion.h1 
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="text-4xl md:text-5xl font-display text-white z-10"
+          >
+            {greeting()}, {user?.firstName || 'Explorer'} 🌅
+          </motion.h1>
+          <motion.p 
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.2 }}
+            className="text-white/80 mt-2 z-10 text-lg md:text-xl"
+          >
+            Where to next?
+          </motion.p>
+        </div>
       </div>
 
       {/* Search and Filters */}

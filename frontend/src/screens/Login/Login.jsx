@@ -33,14 +33,18 @@ const Login = () => {
 
   return (
     <div className="min-h-screen flex bg-bg-base">
-      {/* Left side: Image Placeholder */}
+      {/* Left side: Branding */}
       <div className="hidden lg:flex lg:w-1/2 bg-bg-surface relative items-center justify-center border-r border-brand-primary/10">
-        <div className="text-center">
-          <div className="w-64 h-64 bg-bg-elevated rounded-full border border-brand-primary/20 flex items-center justify-center mb-8 mx-auto">
-            <span className="text-text-secondary">Image Placeholder</span>
-          </div>
-          <h1 className="text-5xl font-display text-brand-primary mb-4">Traveloop</h1>
-          <p className="text-text-secondary text-lg">Personalized Travel Planning Made Easy</p>
+        <div className="text-center px-12">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="w-80 h-80 mb-8 mx-auto"
+          >
+            <img src="/logo.jpg" alt="Traveloop Logo" className="w-full h-full object-contain drop-shadow-2xl" />
+          </motion.div>
+          <h1 className="text-6xl font-display text-brand-primary mb-4 tracking-tight">Traveloop</h1>
+          <p className="text-text-secondary text-xl font-light">Personalized Travel Planning Made Easy</p>
         </div>
       </div>
 

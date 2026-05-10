@@ -1,4 +1,4 @@
-const { Trip, Stop, City, StopActivity, Activity, sequelize } = require('../models');
+const { Trip, Stop, City, StopActivity, Activity, Expense, Checklist, ChecklistCategory, ChecklistItem, Note, Post, sequelize } = require('../models');
 
 // Helper: compute trip status from dates
 function computeTripStatus(startDate, endDate) {
@@ -197,6 +197,64 @@ exports.copyTrip = async (req, res) => {
     res.status(201).json(newTrip);
   } catch (error) {
     await t.rollback();
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc    Delete a trip and all associated data
+exports.deleteTrip = async (req, res) => {
+  const t = await sequelize.transaction();
+  try {
+    const trip = await Trip.findByPk(req.params.id);
+    if (!trip) {
+      return res.status(404).json({ message: 'Trip not found' });
+    }
+    if (trip.userId !== req.user.id) {
+      return res.status(401).json({ message: 'Not authorized' });
+    }
+
+    const tripId = trip.id;
+
+    // 1. Delete Posts (and their comments/likes via DB cascade if set, but we'll do it explicitly or rely on Sequelize)
+    // Actually, models/index.js says Post.hasMany(Comment, { onDelete: 'CASCADE' })
+    // So deleting the post should be enough.
+    const posts = await Post.findAll({ where: { tripId } });
+    for (const post of posts) {
+      await post.destroy({ transaction: t });
+    }
+
+    // 2. Delete Checklist items -> categories -> checklists
+    const checklists = await Checklist.findAll({ where: { tripId } });
+    for (const cl of checklists) {
+      const cats = await ChecklistCategory.findAll({ where: { checklistId: cl.id } });
+      for (const cat of cats) {
+        await ChecklistItem.destroy({ where: { categoryId: cat.id }, transaction: t });
+      }
+      await ChecklistCategory.destroy({ where: { checklistId: cl.id }, transaction: t });
+      await cl.destroy({ transaction: t });
+    }
+
+    // 3. Delete notes
+    await Note.destroy({ where: { tripId }, transaction: t });
+
+    // 4. Delete expenses
+    await Expense.destroy({ where: { tripId }, transaction: t });
+
+    // 5. Delete stop activities -> stops
+    const stops = await Stop.findAll({ where: { tripId } });
+    for (const stop of stops) {
+      await StopActivity.destroy({ where: { stopId: stop.id }, transaction: t });
+      await stop.destroy({ transaction: t });
+    }
+
+    // 6. Finally delete the trip itself
+    await trip.destroy({ transaction: t });
+
+    await t.commit();
+    res.json({ message: 'Trip and all associated data deleted successfully' });
+  } catch (error) {
+    if (t) await t.rollback();
+    console.error('Delete Trip Error:', error);
     res.status(500).json({ message: error.message });
   }
 };

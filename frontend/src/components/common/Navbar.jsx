@@ -25,6 +25,8 @@ const Navbar = () => {
             <Link to="/dashboard" className="text-text-primary hover:text-brand-primary transition-colors">Dashboard</Link>
             <Link to="/trips" className="text-text-primary hover:text-brand-primary transition-colors">My Trips</Link>
             <Link to="/explore" className="text-text-primary hover:text-brand-primary transition-colors">Explore</Link>
+            <Link to="/checklist" className="text-text-primary hover:text-brand-primary transition-colors">Checklist</Link>
+            <Link to="/notes" className="text-text-primary hover:text-brand-primary transition-colors">Notes</Link>
             <Link to="/community" className="text-text-primary hover:text-brand-primary transition-colors">Community</Link>
           </div>
           <div className="flex items-center space-x-4 relative">

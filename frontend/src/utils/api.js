@@ -55,4 +55,32 @@ export const api = {
     if (!res.ok) throw new Error(json.message || 'Request failed');
     return json;
   },
+
+  async put(endpoint, data = {}) {
+    const token = localStorage.getItem('token');
+    const res = await fetch(`${API_BASE}${endpoint}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify(data),
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.message || 'Request failed');
+    return json;
+  },
+
+  async delete(endpoint) {
+    const token = localStorage.getItem('token');
+    const res = await fetch(`${API_BASE}${endpoint}`, {
+      method: 'DELETE',
+      headers: {
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.message || 'Request failed');
+    return json;
+  },
 };

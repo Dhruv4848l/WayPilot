@@ -53,6 +53,8 @@ function App() {
           <Route path="/trips/:id/checklist" element={<PackingChecklist />} />
           <Route path="/trips/:id/notes" element={<TripNotes />} />
           <Route path="/explore" element={<CityActivitySearch />} />
+          <Route path="/checklist" element={<PackingChecklist />} />
+          <Route path="/notes" element={<TripNotes />} />
           <Route path="/community" element={<Community />} />
           <Route path="/admin" element={<AdminPanel />} />
         </Route>
