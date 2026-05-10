@@ -116,7 +116,7 @@ export const regionsData = [
   },
   {
     id: 24,
-    name": "Maldives",
+    name: "Maldives",
     image: "https://res.cloudinary.com/drgeyblqi/image/upload/v1778405879/traveloop_regions/region_maldives_1778405875383.jpg"
   },
   {

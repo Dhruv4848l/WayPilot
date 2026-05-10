@@ -53,9 +53,23 @@ const UserTripListing = () => {
     fetchTrips();
   }, []);
 
-  const ongoing   = trips.filter(t => t.status === 'ONGOING');
-  const upcoming  = trips.filter(t => t.status === 'UPCOMING');
-  const completed = trips.filter(t => t.status === 'COMPLETED');
+  // Compute status from dates (mirrors backend logic for resilience)
+  const getTripCategory = (trip) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const start = new Date(trip.startDate);
+    start.setHours(0, 0, 0, 0);
+    const end = new Date(trip.endDate);
+    end.setHours(0, 0, 0, 0);
+
+    if (today < start) return 'UPCOMING';
+    if (today > end) return 'COMPLETED';
+    return 'ONGOING';
+  };
+
+  const ongoing   = trips.filter(t => getTripCategory(t) === 'ONGOING');
+  const upcoming  = trips.filter(t => getTripCategory(t) === 'UPCOMING');
+  const completed = trips.filter(t => getTripCategory(t) === 'COMPLETED');
 
   return (
     <div className="max-w-4xl mx-auto py-8 px-4 sm:px-6 lg:px-8">

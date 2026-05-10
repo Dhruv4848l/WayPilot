@@ -150,7 +150,14 @@ const MainLanding = () => {
                   </div>
                   <div className="p-4 flex-1 flex flex-col justify-center">
                     <h3 className="font-semibold text-lg">{trip.name}</h3>
-                    <p className="text-sm text-text-secondary">{trip.status} • {days} Days</p>
+                    <p className="text-sm text-text-secondary">
+                      {(() => {
+                        const today = new Date(); today.setHours(0,0,0,0);
+                        const s = new Date(trip.startDate); s.setHours(0,0,0,0);
+                        const e = new Date(trip.endDate); e.setHours(0,0,0,0);
+                        return today < s ? 'Upcoming' : today > e ? 'Completed' : 'Ongoing';
+                      })()} • {days} Days
+                    </p>
                   </div>
                 </motion.div>
               );

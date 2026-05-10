@@ -64,7 +64,7 @@ const activitiesData = {
   ],
   'Varanasi': [
     { name: 'Ganga Aarti Ceremony', type: 'CULTURE', cost: 0, duration: 90, description: 'Witness the mesmerizing evening fire ceremony on the ghats of Varanasi.', imageUrl: 'https://images.unsplash.com/photo-1561361513-2d000a50f0dc?w=800' },
-    { name: 'Sunrise Boat Ride on Ganges', type: 'SIGHTSEEING', cost: 300, duration: 90, description: 'Glide along the sacred Ganges as the sun rises over ancient ghats.', imageUrl: 'https://images.unsplash.com/photo-1570804485046-1d51c tried-b9f8-1d35-5bf8b?w=800' },
+    { name: 'Sunrise Boat Ride on Ganges', type: 'SIGHTSEEING', cost: 300, duration: 90, description: 'Glide along the sacred Ganges as the sun rises over ancient ghats.', imageUrl: 'https://images.unsplash.com/photo-1570804485046-1d6b6daca5d5?w=800' },
     { name: 'Banarasi Silk Shopping', type: 'SHOPPING', cost: 5000, duration: 120, description: 'Shop for world-famous Banarasi silk sarees from local weavers.', imageUrl: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=800' },
   ],
   'Kerala': [

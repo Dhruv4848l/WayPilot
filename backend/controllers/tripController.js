@@ -1,5 +1,35 @@
 const { Trip, Stop, City, StopActivity, Activity, sequelize } = require('../models');
 
+// Helper: compute trip status from dates
+function computeTripStatus(startDate, endDate) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const start = new Date(startDate);
+  start.setHours(0, 0, 0, 0);
+
+  const end = new Date(endDate);
+  end.setHours(0, 0, 0, 0);
+
+  if (today < start) return 'UPCOMING';
+  if (today > end) return 'COMPLETED';
+  return 'ONGOING';
+}
+
+// Helper: attach computed status to trip(s)
+function attachStatus(trips) {
+  if (Array.isArray(trips)) {
+    return trips.map(t => {
+      const plain = t.toJSON ? t.toJSON() : { ...t };
+      plain.status = computeTripStatus(plain.startDate, plain.endDate);
+      return plain;
+    });
+  }
+  const plain = trips.toJSON ? trips.toJSON() : { ...trips };
+  plain.status = computeTripStatus(plain.startDate, plain.endDate);
+  return plain;
+}
+
 // @desc    Get logged in user trips
 // @route   GET /api/trips
 // @access  Private
@@ -7,9 +37,9 @@ exports.getTrips = async (req, res) => {
   try {
     const trips = await Trip.findAll({
       where: { userId: req.user.id },
-      order: [['createdAt', 'DESC']],
+      order: [['startDate', 'ASC']],
     });
-    res.json(trips);
+    res.json(attachStatus(trips));
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -20,13 +50,20 @@ exports.getTrips = async (req, res) => {
 // @access  Private
 exports.createTrip = async (req, res) => {
   try {
-    const { name, description, startDate, endDate } = req.body;
-    let coverPhoto = req.body.coverPhoto;
+    // req.body may be undefined when multer receives multipart without a file
+    const body = req.body || {};
+    const { name, description, startDate, endDate } = body;
+
+    if (!name || !startDate || !endDate) {
+      return res.status(400).json({ message: 'name, startDate, and endDate are required' });
+    }
+
+    let coverPhoto = body.coverPhoto || null;
 
     // Handle image upload if a file is present
     if (req.file) {
       const cloudinary = require('../config/cloudinary');
-      const streamUpload = (req) => {
+      const streamUpload = (fileBuffer) => {
         return new Promise((resolve, reject) => {
           const stream = cloudinary.uploader.upload_stream(
             { folder: 'traveloop/trips' },
@@ -35,13 +72,15 @@ exports.createTrip = async (req, res) => {
               else reject(error);
             }
           );
-          stream.end(req.file.buffer);
+          stream.end(fileBuffer);
         });
       };
       
-      const result = await streamUpload(req);
+      const result = await streamUpload(req.file.buffer);
       coverPhoto = result.secure_url;
     }
+
+    const status = computeTripStatus(startDate, endDate);
 
     const trip = await Trip.create({
       userId: req.user.id,
@@ -50,7 +89,7 @@ exports.createTrip = async (req, res) => {
       startDate,
       endDate,
       coverPhoto,
-      status: 'UPCOMING',
+      status,
     });
 
     res.status(201).json(trip);
@@ -86,7 +125,7 @@ exports.getTripById = async (req, res) => {
       if (trip.userId !== req.user.id && !trip.isPublic) {
         return res.status(401).json({ message: 'Not authorized' });
       }
-      res.json(trip);
+      res.json(attachStatus(trip));
     } else {
       res.status(404).json({ message: 'Trip not found' });
     }
@@ -120,6 +159,8 @@ exports.copyTrip = async (req, res) => {
       return res.status(404).json({ message: 'Trip not found' });
     }
 
+    const status = computeTripStatus(originalTrip.startDate, originalTrip.endDate);
+
     // 1. Create new Trip
     const newTrip = await Trip.create({
       name: `Copy of ${originalTrip.name}`,
@@ -128,7 +169,7 @@ exports.copyTrip = async (req, res) => {
       startDate: originalTrip.startDate,
       endDate: originalTrip.endDate,
       userId: req.user.id,
-      status: 'UPCOMING',
+      status,
       isPublic: false
     }, { transaction: t });
 
