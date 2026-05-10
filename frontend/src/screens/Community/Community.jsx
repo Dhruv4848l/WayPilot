@@ -197,9 +197,12 @@ const Community = () => {
           <input type="text" placeholder="Search trips ...." className="input-field pl-4 pr-10" />
         </div>
         <div className="flex gap-2 w-full md:w-auto">
-          <select className="input-field py-2 text-sm bg-bg-surface"><option>Group by</option></select>
-          <select className="input-field py-2 text-sm bg-bg-surface"><option>Filter</option></select>
-          <select className="input-field py-2 text-sm bg-bg-surface"><option>Sort by</option></select>
+          <select className="input-field py-2 text-sm bg-bg-surface">
+            <option>Sort by...</option>
+            <option>A to Z</option>
+            <option>Oldest first</option>
+            <option>Newest First</option>
+          </select>
         </div>
       </div>
 

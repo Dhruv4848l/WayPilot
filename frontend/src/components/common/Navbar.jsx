@@ -23,6 +23,7 @@ const Navbar = () => {
           </div>
           <div className="hidden md:flex space-x-8">
             <Link to="/dashboard" className="text-text-primary hover:text-brand-primary transition-colors">Dashboard</Link>
+            <Link to="/trips" className="text-text-primary hover:text-brand-primary transition-colors">My Trips</Link>
             <Link to="/explore" className="text-text-primary hover:text-brand-primary transition-colors">Explore</Link>
             <Link to="/community" className="text-text-primary hover:text-brand-primary transition-colors">Community</Link>
           </div>

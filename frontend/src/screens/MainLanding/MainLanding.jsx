@@ -3,10 +3,20 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { api } from '../../utils/api';
 import useAuthStore from '../../store/authStore';
+import { regionsData } from '../../data/regions';
+
+const ITEMS_PER_PAGE = 8;
 
 const MainLanding = () => {
   const user = useAuthStore((s) => s.user);
   const [trips, setTrips] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const totalPages = Math.ceil(regionsData.length / ITEMS_PER_PAGE);
+  const currentRegions = regionsData.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
 
   useEffect(() => {
     const fetchTrips = async () => {
@@ -50,13 +60,10 @@ const MainLanding = () => {
         </div>
         <div className="flex gap-2 w-full md:w-auto">
           <select className="input-field py-2 text-sm bg-bg-surface">
-            <option>Group by...</option>
-          </select>
-          <select className="input-field py-2 text-sm bg-bg-surface">
-            <option>Filter...</option>
-          </select>
-          <select className="input-field py-2 text-sm bg-bg-surface">
             <option>Sort by...</option>
+            <option>A to Z</option>
+            <option>Oldest first</option>
+            <option>Newest First</option>
           </select>
         </div>
       </div>
@@ -64,19 +71,57 @@ const MainLanding = () => {
       {/* Top Regional Selections */}
       <div className="mb-12">
         <h2 className="text-2xl font-display mb-6 border-b border-brand-primary/20 pb-2">Top Regional Selections</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {[1, 2, 3, 4].map((i) => (
-            <motion.div whileHover={{ scale: 1.02 }} key={`region-${i}`} className="card overflow-hidden h-48 relative">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+          {currentRegions.map((region) => (
+            <motion.div whileHover={{ scale: 1.02 }} key={`region-${region.id}`} className="card overflow-hidden h-48 relative cursor-pointer group">
               <div className="absolute inset-0 bg-bg-elevated flex items-center justify-center">
-                <span className="text-text-secondary text-sm">Image Placeholder</span>
+                <img src={region.image} alt={region.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
               </div>
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
-              <div className="absolute bottom-4 left-4">
-                <h3 className="font-semibold text-lg">Region {i}</h3>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+              <div className="absolute bottom-4 left-4 right-4">
+                <h3 className="font-semibold text-lg text-white">{region.name}</h3>
               </div>
             </motion.div>
           ))}
         </div>
+        
+        {/* Pagination Controls */}
+        {totalPages > 1 && (
+          <div className="flex justify-center items-center gap-2 mt-6">
+            <button 
+              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+              className={`px-3 py-1 rounded text-sm ${currentPage === 1 ? 'text-text-disabled cursor-not-allowed' : 'text-text-secondary hover:text-brand-primary hover:bg-bg-elevated'}`}
+            >
+              Prev
+            </button>
+            
+            {Array.from({ length: totalPages }).map((_, idx) => {
+              const page = idx + 1;
+              return (
+                <button
+                  key={page}
+                  onClick={() => setCurrentPage(page)}
+                  className={`w-8 h-8 rounded flex items-center justify-center text-sm transition-colors ${
+                    currentPage === page 
+                      ? 'bg-brand-primary text-bg-base font-bold' 
+                      : 'text-text-secondary hover:bg-bg-elevated hover:text-text-primary'
+                  }`}
+                >
+                  {page}
+                </button>
+              );
+            })}
+            
+            <button 
+              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages}
+              className={`px-3 py-1 rounded text-sm ${currentPage === totalPages ? 'text-text-disabled cursor-not-allowed' : 'text-text-secondary hover:text-brand-primary hover:bg-bg-elevated'}`}
+            >
+              Next
+            </button>
+          </div>
+        )}
       </div>
 
       {/* My Trips */}
