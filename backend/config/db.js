@@ -3,22 +3,32 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 
-const sequelize = new Sequelize(
-  process.env.DB_NAME || 'traveloop',
-  process.env.DB_USER || 'root',
-  process.env.DB_PASS || '',
-  {
-    host: process.env.DB_HOST || 'localhost',
-    port: process.env.DB_PORT || 3306,
-    dialect: 'mysql',
-    logging: false,
-    pool: {
-      max: 5,
-      min: 0,
-      acquire: 30000,
-      idle: 10000,
-    },
-  }
-);
+const sequelize = process.env.DB_URL
+  ? new Sequelize(process.env.DB_URL, {
+      dialect: 'mysql',
+      logging: false,
+      dialectOptions: {
+        ssl: {
+          rejectUnauthorized: false,
+        },
+      },
+    })
+  : new Sequelize(
+      process.env.DB_NAME || 'traveloop',
+      process.env.DB_USER || 'root',
+      process.env.DB_PASS || '',
+      {
+        host: process.env.DB_HOST || 'localhost',
+        port: process.env.DB_PORT || 3306,
+        dialect: 'mysql',
+        logging: false,
+        pool: {
+          max: 5,
+          min: 0,
+          acquire: 30000,
+          idle: 10000,
+        },
+      }
+    );
 
 module.exports = sequelize;
