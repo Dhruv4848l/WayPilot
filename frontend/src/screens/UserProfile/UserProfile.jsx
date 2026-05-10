@@ -204,8 +204,12 @@ const UserProfile = () => {
               const days = Math.ceil((new Date(trip.endDate) - new Date(trip.startDate)) / (1000 * 60 * 60 * 24));
               return (
                 <motion.div whileHover={{ y: -4 }} key={trip.id} className="card overflow-hidden">
-                  <div className="h-48 bg-bg-elevated flex items-center justify-center border-b border-brand-primary/10">
-                    <span className="text-text-secondary">Trip Image</span>
+                  <div className="h-48 bg-bg-elevated flex items-center justify-center border-b border-brand-primary/10 overflow-hidden relative">
+                    {trip.coverPhoto ? (
+                      <img src={trip.coverPhoto} alt={trip.name} className="w-full h-full object-cover" />
+                    ) : (
+                      <span className="text-text-secondary">Trip Image</span>
+                    )}
                   </div>
                   <div className="p-4 flex justify-between items-center">
                     <div>

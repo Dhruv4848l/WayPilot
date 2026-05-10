@@ -141,8 +141,12 @@ const MainLanding = () => {
               const days = Math.ceil((new Date(trip.endDate) - new Date(trip.startDate)) / (1000 * 60 * 60 * 24));
               return (
                 <motion.div whileHover={{ y: -4 }} key={trip.id} className="card overflow-hidden h-56 flex flex-col">
-                  <div className="h-2/3 bg-bg-elevated flex items-center justify-center border-b border-brand-primary/10">
-                    <span className="text-text-secondary">Image Placeholder</span>
+                  <div className="h-2/3 bg-bg-elevated flex items-center justify-center border-b border-brand-primary/10 relative">
+                    {trip.coverPhoto ? (
+                      <img src={trip.coverPhoto} alt={trip.name} className="w-full h-full object-cover" />
+                    ) : (
+                      <span className="text-text-secondary">Image Placeholder</span>
+                    )}
                   </div>
                   <div className="p-4 flex-1 flex flex-col justify-center">
                     <h3 className="font-semibold text-lg">{trip.name}</h3>

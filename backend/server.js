@@ -11,17 +11,17 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Health check
+app.get('/', (req, res) => {
+  res.send('Traveloop API is running (MySQL / Sequelize)');
+});
+
 // Routes
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/trips', require('./routes/trips'));
 app.use('/api/cities', require('./routes/cities'));
 app.use('/api/budget', require('./routes/budget'));
 app.use('/api/community', require('./routes/community'));
-
-// Health check
-app.get('/', (req, res) => {
-  res.send('Traveloop API is running (MySQL / Sequelize)');
-});
 
 const PORT = process.env.PORT || 5000;
 

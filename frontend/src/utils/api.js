@@ -41,4 +41,18 @@ export const api = {
     if (!res.ok) throw new Error(json.message || 'Request failed');
     return json;
   },
+
+  async postFormData(endpoint, formData) {
+    const token = localStorage.getItem('token');
+    const res = await fetch(`${API_BASE}${endpoint}`, {
+      method: 'POST',
+      headers: {
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: formData,
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.message || 'Request failed');
+    return json;
+  },
 };

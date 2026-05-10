@@ -17,12 +17,15 @@ exports.getCities = async (req, res) => {
   }
 };
 
-// @desc    Get activities for a city or search
-// @route   GET /api/activities
+// @desc    Get activities with pagination (for suggestions)
+// @route   GET /api/cities/activities
 // @access  Public
 exports.getActivities = async (req, res) => {
   try {
     const whereClause = {};
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 6;
+    const offset = (page - 1) * limit;
 
     if (req.query.keyword) {
       whereClause.name = { [Op.like]: `%${req.query.keyword}%` };
@@ -30,12 +33,28 @@ exports.getActivities = async (req, res) => {
     if (req.query.cityId) {
       whereClause.cityId = req.query.cityId;
     }
+    if (req.query.type) {
+      whereClause.type = req.query.type;
+    }
 
-    const activities = await Activity.findAll({
+    const { count, rows } = await Activity.findAndCountAll({
       where: whereClause,
-      include: [{ model: City, as: 'city', attributes: ['name', 'country'] }],
+      include: [{ model: City, as: 'city', attributes: ['name', 'country', 'imageUrl'] }],
+      limit,
+      offset,
+      order: [['id', 'ASC']],
     });
-    res.json(activities);
+
+    res.json({
+      activities: rows,
+      pagination: {
+        page,
+        limit,
+        total: count,
+        totalPages: Math.ceil(count / limit),
+        hasMore: offset + rows.length < count,
+      },
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
