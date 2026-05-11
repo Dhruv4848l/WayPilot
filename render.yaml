@@ -21,14 +21,3 @@ services:
         sync: false
       - key: CLOUDINARY_API_SECRET
         sync: false
-
-  - type: web
-    name: traveloop-frontend
-    env: static
-    plan: free
-    rootDir: frontend
-    buildCommand: npm install && npm run build
-    staticPublishPath: dist
-    envVars:
-      - key: VITE_API_URL
-        sync: false
