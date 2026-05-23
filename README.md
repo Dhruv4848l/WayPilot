@@ -2,7 +2,7 @@
 
 > Personalized Travel Planning Made Easy
 
-**🌐 Live Project Link:** [https://odoo-x-pu-hackathon-3zdpk1ssm-dhruv-majis-projects-9df80bb8.vercel.app/](https://odoo-x-pu-hackathon-3zdpk1ssm-dhruv-majis-projects-9df80bb8.vercel.app/)
+**🌐 Live Project Link:** [Your-Travel-Planning-Begins-Here](https://odoo-x-pu-hackathon.vercel.app/)
 
 Traveloop is a comprehensive, full-stack travel planning platform that helps users organize their trips, track budgets, manage checklists, and connect with a community of fellow explorers.
 
