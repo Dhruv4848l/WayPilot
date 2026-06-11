@@ -1,4 +1,4 @@
-# Traveloop 🌍
+# WayPilot 🌍
 
 > Personalized Travel Planning Made Easy
 
